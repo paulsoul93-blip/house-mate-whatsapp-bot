@@ -46,6 +46,23 @@ export async function handleGroupMessage(
     return;
   }
 
+  if (command.name === 'member-photo') {
+    const personName = command.args[0];
+    if (!personName) {
+      return;
+    }
+
+    try {
+      await messenger.sendMemberPhoto(socket, groupId, personName);
+    } catch (error) {
+      console.error('[HouseMateCommands] Member photo could not be sent:', error);
+      await socket.sendMessage(groupId, {
+        text: '\u26A0\uFE0F Member photo is currently unavailable.',
+      });
+    }
+    return;
+  }
+
   if (command.name === 'welcome') {
     await messenger.sendWelcome(socket, groupId);
     return;
@@ -60,6 +77,18 @@ export async function handleGroupMessage(
     }
 
     await messenger.sendWeeklyHandover(socket, groupId);
+    return;
+  }
+
+  if (command.name === 'test-sunday') {
+    if (!message.key.fromMe) {
+      console.warn(
+        '[HouseMateCommands] Ignored admin-only command \'test-sunday\' from a group member.'
+      );
+      return;
+    }
+
+    await messenger.sendSundayAnnouncement(socket, groupId);
     return;
   }
 

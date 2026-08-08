@@ -2,8 +2,10 @@ export type HouseCommandName =
   | 'cleaning'
   | 'bins'
   | 'pussy'
+  | 'member-photo'
   | 'welcome'
   | 'test-weekly'
+  | 'test-sunday'
   | 'next'
   | 'previous'
   | 'skip'
@@ -19,6 +21,8 @@ const COMMAND_ALIASES: Readonly<Record<string, HouseCommandName>> = {
   '/bins': 'bins',
   '/pussy': 'pussy',
   '/cipa': 'pussy',
+  '/test': 'test-sunday',
+  '/test-sunday': 'test-sunday',
   '/testweekly': 'test-weekly',
   '/test-weekly': 'test-weekly',
   '/help': 'welcome',
@@ -38,6 +42,14 @@ const COMMAND_ALIASES: Readonly<Record<string, HouseCommandName>> = {
   '!setduty': 'set-duty',
 };
 
+const MEMBER_PHOTO_ALIASES: Readonly<Record<string, string>> = {
+  '/pawel': 'Pawel',
+  '/paweł': 'Pawel',
+  '/merica': 'Merica',
+  '/ozgur': 'Ozgur',
+  '/kamil': 'Kamil',
+};
+
 export function parseHouseCommand(text: string): HouseCommand | null {
   const parts = text.trim().split(/\s+/).filter(Boolean);
   const rawCommand = parts[0]?.toLowerCase();
@@ -46,6 +58,14 @@ export function parseHouseCommand(text: string): HouseCommand | null {
   }
 
   const commandWithoutMention = rawCommand.split('@')[0];
+  const memberName = MEMBER_PHOTO_ALIASES[commandWithoutMention];
+  if (memberName) {
+    return {
+      name: 'member-photo',
+      args: [memberName, ...parts.slice(1)],
+    };
+  }
+
   const name = COMMAND_ALIASES[commandWithoutMention];
   if (!name) {
     return null;

@@ -54,4 +54,31 @@ describe('house group handlers', () => {
 
     expect(sendWeeklyHandover).not.toHaveBeenCalled();
   });
+
+  it('lets the owner trigger the 17:00 Sunday announcement with /test', async () => {
+    const sendSundayAnnouncement: jest.MockedFunction<
+      (socket: WASocket, groupId: string) => Promise<void>
+    > = jest.fn().mockResolvedValue(undefined);
+    const messenger = {
+      sendSundayAnnouncement,
+    } as unknown as HouseMateMessenger;
+    const queueService = {} as QueueService;
+    const socket = {} as WASocket;
+    const message = {
+      key: {
+        remoteJid: '120363428121220076@g.us',
+        fromMe: true,
+      },
+      message: {
+        conversation: '/test',
+      },
+    } as proto.IWebMessageInfo;
+
+    await handleGroupMessage(socket, message, queueService, messenger);
+
+    expect(sendSundayAnnouncement).toHaveBeenCalledWith(
+      socket,
+      '120363428121220076@g.us'
+    );
+  });
 });

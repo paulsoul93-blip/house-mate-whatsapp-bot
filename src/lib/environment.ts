@@ -12,6 +12,7 @@ const rawEnvironmentSchema = z.object({
   WA_GROUP_ID: z.string().trim().regex(/^\d+@(g\.us|broadcast)$/).optional(),
   DUTY_MEMBERS: z.string().trim().min(1),
   SCHEDULE_CRON: z.string().trim().min(1).max(80),
+  ANNOUNCEMENT_CRON: z.string().trim().min(1).max(80),
   SCHEDULE_TIMEZONE: z.string().trim().min(1).max(80),
   DATA_DIR: z.string().trim().min(1),
   PUSSY_IMAGE_PATH: z.string().trim().min(1).max(260).optional(),
@@ -31,6 +32,7 @@ export interface EnvironmentConfig {
   groupId?: string;
   dutyMembers: string[];
   scheduleCron: string;
+  announcementCron: string;
   scheduleTimezone: string;
   dataDir: string;
   pussyImagePaths: string[];
@@ -52,6 +54,7 @@ export function parseEnvironment(
     WA_GROUP_ID: normaliseOptional(environment.WA_GROUP_ID),
     DUTY_MEMBERS: environment.DUTY_MEMBERS ?? 'Pawel,Merica,Ozgur,Kamil',
     SCHEDULE_CRON: environment.SCHEDULE_CRON ?? '0 19 * * 0',
+    ANNOUNCEMENT_CRON: environment.ANNOUNCEMENT_CRON ?? '0 17 * * 0',
     SCHEDULE_TIMEZONE: environment.SCHEDULE_TIMEZONE ?? 'Europe/London',
     DATA_DIR: environment.DATA_DIR ?? './data',
     PUSSY_IMAGE_PATH: normaliseOptional(environment.PUSSY_IMAGE_PATH),
@@ -104,6 +107,7 @@ export function parseEnvironment(
     groupId: result.data.WA_GROUP_ID,
     dutyMembers,
     scheduleCron: result.data.SCHEDULE_CRON,
+    announcementCron: result.data.ANNOUNCEMENT_CRON,
     scheduleTimezone: result.data.SCHEDULE_TIMEZONE,
     dataDir: result.data.DATA_DIR,
     pussyImagePaths,

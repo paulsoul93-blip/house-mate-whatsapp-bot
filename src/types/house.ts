@@ -42,6 +42,12 @@ export interface CleaningCardData extends WelcomeCardData {
   collectionStatus: CouncilCollectionStatus;
 }
 
+export interface SundayAnnouncementCardData extends WelcomeCardData {
+  person: string;
+  formattedRange: string;
+  photoPath: string;
+}
+
 export interface BinsCardData extends WelcomeCardData {
   collectionStatus: CouncilCollectionStatus;
   binPhotoPath: string;

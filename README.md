@@ -17,6 +17,7 @@ All public commands work for every member of the configured WhatsApp group. Owne
 
 - Posts a one-time visual welcome card after a new welcome version is deployed.
 - Welcomes people when they are added to the target WhatsApp group.
+- Sends a focused next-week cleaning announcement every Sunday at 17:00 Europe/London with the selected member artwork.
 - Rotates the cleaning duty and posts a visual handover card every Sunday at 19:00 Europe/London.
 - Fetches collection dates from the official Huntingdonshire District Council calendar for the exact property.
 - Caches validated council data for resilience. If live and cached data are unavailable, it reports that state and never guesses a bin type.

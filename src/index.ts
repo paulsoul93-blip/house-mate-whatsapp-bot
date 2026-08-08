@@ -77,6 +77,7 @@ async function main(): Promise<void> {
       targetGroup: config.groupName,
       targetGroupFound: Boolean(groupId),
       schedule: config.scheduleCron,
+      announcementSchedule: config.announcementCron,
       timezone: config.scheduleTimezone,
       household: {
         address: config.houseAddress,

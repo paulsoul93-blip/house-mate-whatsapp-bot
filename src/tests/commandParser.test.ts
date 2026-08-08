@@ -34,6 +34,17 @@ describe('parseHouseCommand', () => {
     });
   });
 
+  it('recognises the hidden member photo shortcuts', () => {
+    expect(parseHouseCommand('/paweł')).toEqual({
+      name: 'member-photo',
+      args: ['Pawel'],
+    });
+    expect(parseHouseCommand('/kamil')).toEqual({
+      name: 'member-photo',
+      args: ['Kamil'],
+    });
+  });
+
   it('accepts a WhatsApp command suffix and normalises casing', () => {
     expect(parseHouseCommand('/CLEANING@HouseMateBot')).toEqual({
       name: 'cleaning',

@@ -1,6 +1,7 @@
 import {
   buildBinsCaption,
   buildCleaningCaption,
+  buildSundayAnnouncementCaption,
 } from '../services/houseMateMessenger';
 import type {
   CouncilCollectionStatus,
@@ -54,6 +55,17 @@ describe('minimal WhatsApp card captions', () => {
       })
     ).toBe(
       '\u26A0\uFE0F Council data unavailable \u00B7 Try /bins again\n\u{1F3E0} 19 Silver Birch Close \u00B7 PE29 7BW'
+    );
+  });
+
+  it('keeps the Sunday announcement focused on one next person', () => {
+    expect(
+      buildSundayAnnouncementCaption(
+        'Merica',
+        'Mon 10/08 – Sun 16/08'
+      )
+    ).toBe(
+      '🎉 Congratulations · next week is Merica\n🧹 Mon 10/08 – Sun 16/08\n🏠 19 Silver Birch Close · PE29 7BW · Sunday 19:00 handover'
     );
   });
 });

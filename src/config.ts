@@ -11,10 +11,12 @@ export interface AppConfig {
   groupId?: string;
   dutyMembers: string[];
   scheduleCron: string;
+  announcementCron: string;
   scheduleTimezone: string;
   dataDir: string;
   pussyImagePaths: string[];
   binsImagePath: string;
+  memberPhotoPaths: Readonly<Record<string, string>>;
   authDir: string;
   stateFile: string;
   welcomeStateFile: string;
@@ -37,6 +39,12 @@ export const config: AppConfig = {
     path.resolve(imagePath)
   ),
   binsImagePath: path.join(dataDir, 'bins-photo.png'),
+  memberPhotoPaths: {
+    pawel: path.join(dataDir, 'member-pawel.jpg'),
+    merica: path.join(dataDir, 'member-merica.jpg'),
+    ozgur: path.join(dataDir, 'member-ozgur.jpg'),
+    kamil: path.join(dataDir, 'member-kamil.jpg'),
+  },
   authDir: path.join(dataDir, 'auth_info'),
   stateFile: path.join(dataDir, 'state.json'),
   welcomeStateFile: path.join(dataDir, 'welcome-state.json'),

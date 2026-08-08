@@ -5,12 +5,16 @@ import type {
   BinKind,
   CouncilCollectionStatus,
   DutySchedule,
+  SundayAnnouncementCardData,
 } from '../types/house';
 import { BinCalendarService } from './binCalendarService';
 import { CardRenderer } from './cardRenderer';
 import { QueueService } from './queueService';
 import { WelcomeStateService } from './welcomeStateService';
-import { readRandomPussyImage } from './pussyImageService';
+import {
+  readPussyImage,
+  readRandomPussyImage,
+} from './pussyImageService';
 
 export class HouseMateMessenger {
   constructor(
@@ -101,6 +105,53 @@ export class HouseMateMessenger {
     await this.sendCleaning(socket, groupId, true);
   }
 
+  public async sendSundayAnnouncement(
+    socket: WASocket,
+    groupId: string
+  ): Promise<void> {
+    const schedule = this.queueService.getDutySchedule();
+    const nextPerson = schedule.next.person;
+    const photoPath = this.config.memberPhotoPaths[normaliseMemberKey(nextPerson)];
+    if (!photoPath) {
+      throw new Error(`No member photo configured for ${nextPerson}`);
+    }
+
+    const image = await this.cardRenderer.renderSundayAnnouncementCard({
+      address: this.config.houseAddress,
+      postcode: this.config.housePostcode,
+      person: nextPerson,
+      formattedRange: schedule.next.formattedRange,
+      photoPath,
+    });
+
+    await socket.sendMessage(groupId, {
+      image,
+      caption: buildSundayAnnouncementCaption(
+        nextPerson,
+        schedule.next.formattedRange,
+        this.config.houseAddress,
+        this.config.housePostcode
+      ),
+    });
+  }
+
+  public async sendMemberPhoto(
+    socket: WASocket,
+    groupId: string,
+    personName: string
+  ): Promise<void> {
+    const photoPath = this.config.memberPhotoPaths[normaliseMemberKey(personName)];
+    if (!photoPath) {
+      throw new Error(`No member photo configured for ${personName}`);
+    }
+
+    const image = await readPussyImage(photoPath);
+    await socket.sendMessage(groupId, {
+      image,
+      caption: `\u{1F4F8} ${personName}`,
+    });
+  }
+
   public async sendBins(
     socket: WASocket,
     groupId: string,
@@ -146,6 +197,19 @@ export function buildCleaningCaption(
   ].join('\n');
 }
 
+export function buildSundayAnnouncementCaption(
+  person: string,
+  formattedRange: string,
+  address = '19 Silver Birch Close',
+  postcode = 'PE29 7BW'
+): string {
+  return [
+    `\u{1F389} Congratulations · next week is ${person}`,
+    `🧹 ${formattedRange}`,
+    `🏠 ${address} · ${postcode} · Sunday 19:00 handover`,
+  ].join('\n');
+}
+
 export function buildBinsCaption(
   status: CouncilCollectionStatus,
   address = '19 Silver Birch Close',
@@ -184,6 +248,13 @@ function getAccessibleBinLabel(bin: BinKind): string {
 
 function toMentionLabel(participantId: string): string {
   return `@${participantId.split('@')[0]}`;
+}
+
+function normaliseMemberKey(value: string): string {
+  return value
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase();
 }
 
 function capitalise(value: string): string {

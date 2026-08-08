@@ -20,6 +20,7 @@ import type {
   BinKind,
   CleaningCardData,
   CouncilCollectionStatus,
+  SundayAnnouncementCardData,
   WelcomeCardData,
 } from '../types/house';
 
@@ -126,6 +127,32 @@ export class CardRenderer {
       ${icon(Clock3, 112, 1158, 36, COLORS.accent)}
       <text x="168" y="1182" class="sectionSmall">Sunday handover at 19:00</text>
       <text x="168" y="1224" class="small">Complete the list before the next rota begins.</text>
+    `;
+
+    return this.renderSvg(this.frame(body));
+  }
+
+  public async renderSundayAnnouncementCard(
+    data: SundayAnnouncementCardData
+  ): Promise<Buffer> {
+    const photo = await readOptionalImageDataUri(data.photoPath);
+    if (!photo) {
+      throw new Error('Configured member photo is unavailable');
+    }
+
+    const body = `
+      ${this.header(data.address, data.postcode, 'SUNDAY 17:00')}
+      <text x="72" y="236" class="display">Next week.</text>
+      <text x="72" y="286" class="body muted">Cleaning duty goes to</text>
+
+      ${this.depthPanel(72, 330, 936, 650, 34, 'panelStrong', COLORS.primary)}
+      <image href="${photo}" x="74" y="332" width="932" height="646" preserveAspectRatio="xMidYMid slice" clip-path="url(#memberPhotoClip)"/>
+      <rect x="74" y="332" width="932" height="646" rx="34" fill="url(#photoShade)" opacity=".34"/>
+
+      ${this.depthPanel(72, 1030, 936, 232, 30, 'panel', COLORS.accent)}
+      <text x="112" y="1090" class="eyebrow light">CONGRATULATIONS</text>
+      <text x="112" y="1154" class="heroName">${escapeXml(data.person)}</text>
+      <text x="112" y="1212" class="sectionSmall">${escapeXml(data.formattedRange)}</text>
     `;
 
     return this.renderSvg(this.frame(body));
@@ -276,6 +303,7 @@ export class CardRenderer {
       <svg xmlns="http://www.w3.org/2000/svg" width="${WIDTH}" height="${HEIGHT}" viewBox="0 0 ${WIDTH} ${HEIGHT}">
         <defs>
           <clipPath id="binPhotoClip"><rect x="112" y="350" width="220" height="246" rx="30"/></clipPath>
+          <clipPath id="memberPhotoClip"><rect x="74" y="332" width="932" height="646" rx="34"/></clipPath>
           <radialGradient id="glow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(920 120) rotate(135) scale(520)">
             <stop stop-color="${accent}" stop-opacity=".18"/>
             <stop offset="1" stop-color="${accent}" stop-opacity="0"/>
@@ -288,6 +316,10 @@ export class CardRenderer {
             <stop stop-color="${accent}" stop-opacity=".24"/>
             <stop offset=".55" stop-color="#121B30"/>
             <stop offset="1" stop-color="#0E1424"/>
+          </linearGradient>
+          <linearGradient id="photoShade" x1="540" y1="332" x2="540" y2="978" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#020617" stop-opacity="0"/>
+            <stop offset="1" stop-color="#020617" stop-opacity=".82"/>
           </linearGradient>
           <filter id="shadow" x="-20%" y="-20%" width="140%" height="160%">
             <feDropShadow dx="0" dy="24" stdDeviation="28" flood-color="#000000" flood-opacity=".42"/>
@@ -362,7 +394,8 @@ async function readOptionalImageDataUri(
 ): Promise<string | null> {
   try {
     const image = await readFile(imagePath);
-    return `data:image/png;base64,${image.toString('base64')}`;
+    const mimeType = /\.jpe?g$/i.test(imagePath) ? 'image/jpeg' : 'image/png';
+    return `data:${mimeType};base64,${image.toString('base64')}`;
   } catch {
     return null;
   }
