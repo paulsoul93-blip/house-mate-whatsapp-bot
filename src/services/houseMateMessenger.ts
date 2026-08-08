@@ -141,7 +141,7 @@ export class HouseMateMessenger {
     const image = await readPussyImage(photoPath);
     await socket.sendMessage(groupId, {
       image,
-      caption: `\u{1F4F8} ${personName}`,
+      caption: buildMemberPhotoCaption(personName),
     });
   }
 
@@ -172,6 +172,14 @@ export class HouseMateMessenger {
       caption: '\u{1F4F8} Shared house photo',
     });
   }
+}
+
+export function buildMemberPhotoCaption(personName: string): string {
+  if (normaliseMemberKey(personName) === 'marcin') {
+    return "Didn't your mother teach you? I'll teach you.";
+  }
+
+  return `\u{1F4F8} ${personName}`;
 }
 
 export function buildCleaningCaption(schedule: DutySchedule): string {

@@ -1,6 +1,7 @@
 import {
   buildBinsCaption,
   buildCleaningCaption,
+  buildMemberPhotoCaption,
   buildSundayAnnouncementCaption,
 } from '../services/houseMateMessenger';
 import type {
@@ -9,6 +10,13 @@ import type {
 } from '../types/house';
 
 describe('minimal WhatsApp card captions', () => {
+  it('uses the fixed English Marcin caption while preserving generic member captions', () => {
+    expect(buildMemberPhotoCaption('Marcin')).toBe(
+      "Didn't your mother teach you? I'll teach you."
+    );
+    expect(buildMemberPhotoCaption('Pawel')).toBe('\u{1F4F8} Pawel');
+  });
+
   const schedule: DutySchedule = {
     current: {
       person: 'Pawel',

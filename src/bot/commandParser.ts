@@ -48,6 +48,7 @@ const MEMBER_PHOTO_ALIASES: Readonly<Record<string, string>> = {
   '/merica': 'Merica',
   '/ozgur': 'Ozgur',
   '/kamil': 'Kamil',
+  '/marcin': 'Marcin',
 };
 
 export function parseHouseCommand(text: string): HouseCommand | null {

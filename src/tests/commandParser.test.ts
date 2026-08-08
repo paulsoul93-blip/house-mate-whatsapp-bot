@@ -43,6 +43,10 @@ describe('parseHouseCommand', () => {
       name: 'member-photo',
       args: ['Kamil'],
     });
+    expect(parseHouseCommand('/marcin')).toEqual({
+      name: 'member-photo',
+      args: ['Marcin'],
+    });
   });
 
   it('accepts a WhatsApp command suffix and normalises casing', () => {

@@ -44,6 +44,7 @@ export const config: AppConfig = {
     merica: path.join(dataDir, 'member-merica.jpg'),
     ozgur: path.join(dataDir, 'member-ozgur.jpg'),
     kamil: path.join(dataDir, 'member-kamil.jpg'),
+    marcin: path.join(dataDir, 'member-marcin.jpg'),
   },
   authDir: path.join(dataDir, 'auth_info'),
   stateFile: path.join(dataDir, 'state.json'),
