@@ -44,4 +44,5 @@ export interface CleaningCardData extends WelcomeCardData {
 
 export interface BinsCardData extends WelcomeCardData {
   collectionStatus: CouncilCollectionStatus;
+  binPhotoPath: string;
 }

@@ -14,6 +14,7 @@ export interface AppConfig {
   scheduleTimezone: string;
   dataDir: string;
   pussyImagePath: string;
+  binsImagePath: string;
   authDir: string;
   stateFile: string;
   welcomeStateFile: string;
@@ -33,6 +34,7 @@ export const config: AppConfig = {
   ...environment,
   dataDir,
   pussyImagePath: path.resolve(environment.pussyImagePath),
+  binsImagePath: path.join(dataDir, 'bins-photo.png'),
   authDir: path.join(dataDir, 'auth_info'),
   stateFile: path.join(dataDir, 'state.json'),
   welcomeStateFile: path.join(dataDir, 'welcome-state.json'),

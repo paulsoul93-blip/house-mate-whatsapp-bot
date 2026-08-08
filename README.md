@@ -10,6 +10,8 @@ A private, visual household assistant for the **House Mate App** WhatsApp group 
 - `/pussy` - sends the private shared house photo stored locally in `data/pussy.jpg`.
 - `/testweekly` - owner-only preview of the exact Sunday 19:00 handover card; it does not advance the rota.
 
+The bin card also uses the local photorealistic `data/bins-photo.png` asset with blue recycling and black residual bins. It is intentionally ignored by GitHub and stays on this computer.
+
 All public commands work for every member of the configured WhatsApp group. Owner-only legacy administration commands remain available for maintaining the rota.
 
 ## Automatic behaviour

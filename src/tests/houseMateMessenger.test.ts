@@ -33,15 +33,15 @@ describe('minimal WhatsApp card captions', () => {
     sourceUrl: 'https://example.com/calendar',
   };
 
-  it('keeps the cleaning caption to one useful line', () => {
+  it('keeps the cleaning caption short and location-aware', () => {
     expect(buildCleaningCaption(schedule)).toBe(
-      '\u{1F9F9} Pawel is on duty · Mon 27/07 \u2013 Sun 02/08'
+      '🧹 Pawel · Mon 27/07 \u2013 Sun 02/08\n🏠 19 Silver Birch Close · PE29 7BW · Sunday handover 19:00'
     );
   });
 
-  it('keeps the bin caption compact while preserving the action', () => {
+  it('keeps the bin caption compact while preserving the action and location', () => {
     expect(buildBinsCaption(collectionStatus)).toBe(
-      '♻️ Blue recycling bin + food caddy · Put out Sun 02/08 after 18:00'
+      '♻️ Blue recycling bin + food caddy · Sun 02/08 after 18:00\n🏠 19 Silver Birch Close · PE29 7BW'
     );
   });
 
@@ -52,6 +52,6 @@ describe('minimal WhatsApp card captions', () => {
         collection: null,
         source: 'unavailable',
       })
-    ).toBe('⚠️ Council data unavailable · Try /bins again shortly');
+    ).toBe('⚠️ Council data unavailable · Try /bins again\n🏠 19 Silver Birch Close · PE29 7BW');
   });
 });

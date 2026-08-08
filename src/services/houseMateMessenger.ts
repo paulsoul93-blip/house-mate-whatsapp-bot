@@ -51,7 +51,7 @@ export class HouseMateMessenger {
         : `\u{1F3E0} Welcome to ${this.config.houseAddress}`;
     const caption = [
       welcomeLine,
-      '\u{1F4AC} Chat here · \u{1F9F9} /cleaning · ♻️ /bins · \u{1F4F8} /pussy',
+      `\u{1F4AC} /cleaning · ♻️ /bins · \u{1F4F8} /pussy · \u{1F4CD} ${this.config.housePostcode}`,
     ].join('\n');
 
     await socket.sendMessage(groupId, {
@@ -78,7 +78,11 @@ export class HouseMateMessenger {
 
     await socket.sendMessage(groupId, {
       image,
-      caption: buildCleaningCaption(schedule),
+      caption: buildCleaningCaption(
+        schedule,
+        this.config.houseAddress,
+        this.config.housePostcode
+      ),
     });
   }
 
@@ -100,11 +104,16 @@ export class HouseMateMessenger {
       address: this.config.houseAddress,
       postcode: this.config.housePostcode,
       collectionStatus,
+      binPhotoPath: this.config.binsImagePath,
     });
 
     await socket.sendMessage(groupId, {
       image,
-      caption: buildBinsCaption(collectionStatus),
+      caption: buildBinsCaption(
+        collectionStatus,
+        this.config.houseAddress,
+        this.config.housePostcode
+      ),
     });
   }
 
@@ -117,21 +126,38 @@ export class HouseMateMessenger {
   }
 }
 
-export function buildCleaningCaption(schedule: DutySchedule): string {
-  return `🧹 ${schedule.current.person} is on duty · ${schedule.current.formattedRange}`;
+export function buildCleaningCaption(
+  schedule: DutySchedule,
+  address = '19 Silver Birch Close',
+  postcode = 'PE29 7BW'
+): string {
+  return [
+    `🧹 ${schedule.current.person} · ${schedule.current.formattedRange}`,
+    `🏠 ${address} · ${postcode} · Sunday handover 19:00`,
+  ].join('\n');
 }
 
-export function buildBinsCaption(status: CouncilCollectionStatus): string {
+export function buildBinsCaption(
+  status: CouncilCollectionStatus,
+  address = '19 Silver Birch Close',
+  postcode = 'PE29 7BW'
+): string {
   if (!status.collection) {
-    return '⚠️ Council data unavailable · Try /bins again shortly';
+    return [
+      '⚠️ Council data unavailable · Try /bins again',
+      `🏠 ${address} · ${postcode}`,
+    ].join('\n');
   }
 
   const containerList = status.collection.bins
     .map(getAccessibleBinLabel)
     .join(' + ');
-  return `♻️ ${capitalise(containerList)} · Put out ${formatWeekdayDayMonth(
-    status.collection.putOutDate
-  )} after 18:00`;
+  return [
+    `♻️ ${capitalise(containerList)} · ${formatWeekdayDayMonth(
+      status.collection.putOutDate
+    )} after 18:00`,
+    `🏠 ${address} · ${postcode}`,
+  ].join('\n');
 }
 
 function getAccessibleBinLabel(bin: BinKind): string {

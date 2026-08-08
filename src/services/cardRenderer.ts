@@ -1,4 +1,5 @@
 import sharp from 'sharp';
+import { readFile } from 'node:fs/promises';
 import {
   ArrowRight,
   CalendarDays,
@@ -56,7 +57,7 @@ export class CardRenderer {
       <text x="72" y="308" class="body muted">This is the private group for everyone living at</text>
       <text x="72" y="352" class="body">${escapeXml(data.address)}.</text>
 
-      <rect x="72" y="420" width="936" height="200" rx="28" class="panelStrong"/>
+      ${this.depthPanel(72, 420, 936, 200, 28, 'panelStrong', COLORS.accent)}
       ${icon(MessageCircle, 112, 462, 44, COLORS.accent)}
       <text x="180" y="484" class="section">Stay connected</text>
       <text x="112" y="548" class="body muted">Chat with your housemates, check the cleaning rota</text>
@@ -80,9 +81,7 @@ export class CardRenderer {
         COLORS.accent
       )}
 
-      <rect x="72" y="1164" width="936" height="98" rx="24" fill="#FFFFFF08" stroke="${
-        COLORS.border
-      }"/>
+      ${this.depthPanel(72, 1164, 936, 98, 24, 'panel', COLORS.muted)}
       ${icon(Image, 108, 1191, 38, COLORS.muted)}
       <text x="168" y="1208" class="small">/pussy  ·  SHARED HOUSE PHOTO</text>
       <text x="168" y="1238" class="meta">Available to every member of this group</text>
@@ -97,7 +96,7 @@ export class CardRenderer {
       ${this.header(data.address, data.postcode, 'WEEKLY HOUSE CARE')}
       <text x="72" y="234" class="display">Cleaning rota</text>
 
-      <rect x="72" y="292" width="604" height="244" rx="30" fill="url(#primaryPanel)" stroke="#55A7FF55"/>
+      ${this.depthGradientPanel(72, 292, 604, 244, 30, 'url(#primaryPanel)', COLORS.primary)}
       <text x="112" y="344" class="eyebrow light">ON DUTY NOW</text>
       <text x="112" y="426" class="heroName">${escapeXml(
         data.schedule.current.person
@@ -107,7 +106,7 @@ export class CardRenderer {
         data.schedule.current.formattedRange
       )}</text>
 
-      <rect x="700" y="292" width="308" height="244" rx="30" class="panelStrong"/>
+      ${this.depthPanel(700, 292, 308, 244, 30, 'panelStrong', COLORS.accent)}
       <text x="736" y="344" class="eyebrow">NEXT</text>
       <text x="736" y="412" class="nextName">${escapeXml(
         data.schedule.next.person
@@ -118,15 +117,13 @@ export class CardRenderer {
       )}</text>
 
       <text x="72" y="622" class="eyebrow">THIS WEEK'S CHECKLIST</text>
-      <rect x="72" y="660" width="936" height="420" rx="30" class="panel"/>
+      ${this.depthPanel(72, 660, 936, 420, 30, 'panel', COLORS.accent)}
       ${this.taskRow(112, 714, CookingPot, HOUSE_CLEANING_TASKS[0])}
       ${this.taskRow(112, 804, Wind, HOUSE_CLEANING_TASKS[1])}
       ${this.taskRow(112, 894, ShowerHead, HOUSE_CLEANING_TASKS[2])}
       ${this.taskRow(112, 984, Trash2, binTask, getBinAccent(data.collectionStatus), 23)}
 
-      <rect x="72" y="1120" width="936" height="142" rx="28" fill="#FFFFFF08" stroke="${
-        COLORS.border
-      }"/>
+      ${this.depthPanel(72, 1120, 936, 142, 28, 'panel', COLORS.accent)}
       ${icon(Clock3, 112, 1158, 36, COLORS.accent)}
       <text x="168" y="1182" class="sectionSmall">Sunday handover at 19:00</text>
       <text x="168" y="1224" class="small">Complete the list before the next rota begins.</text>
@@ -136,6 +133,7 @@ export class CardRenderer {
   }
 
   public async renderBinsCard(data: BinsCardData): Promise<Buffer> {
+    const binPhoto = await readOptionalImageDataUri(data.binPhotoPath);
     const collection = data.collectionStatus.collection;
     const mainBin = collection?.bins.find((bin) => bin !== 'food') ?? null;
     const binAccent = getBinAccent(data.collectionStatus);
@@ -154,30 +152,63 @@ export class CardRenderer {
       ${this.header(data.address, data.postcode, 'COUNCIL COLLECTION')}
       <text x="72" y="234" class="display">Bin collection</text>
 
-      <rect x="72" y="302" width="936" height="390" rx="34" fill="url(#binPanel)" stroke="${binAccent}66"/>
-      <rect x="112" y="350" width="164" height="246" rx="30" fill="${binAccent}"/>
-      ${icon(Trash2, 154, 412, 80, COLORS.foreground)}
-      <text x="316" y="376" class="eyebrow light">NEXT COLLECTION</text>
-      <text x="316" y="444" class="binTitle">${escapeXml(title)}</text>
-      <text x="316" y="516" class="section">${escapeXml(collectionDate)}</text>
-      <text x="316" y="574" class="small light">${escapeXml(foodText)}</text>
-      <text x="316" y="624" class="small light">${escapeXml(putOutText)}</text>
+      ${this.depthGradientPanel(72, 302, 936, 390, 34, 'url(#binPanel)', binAccent)}
+      ${binPhoto
+        ? `<rect x="112" y="350" width="220" height="246" rx="30" fill="#07101F" stroke="${binAccent}88"/><image href="${binPhoto}" x="114" y="352" width="216" height="242" preserveAspectRatio="xMidYMid slice" clip-path="url(#binPhotoClip)"/>`
+        : `<rect x="112" y="350" width="164" height="246" rx="30" fill="${binAccent}"/>${icon(Trash2, 154, 412, 80, COLORS.foreground)}`}
+      <text x="360" y="376" class="eyebrow light">NEXT COLLECTION</text>
+      <text x="360" y="444" class="binTitle">${escapeXml(title)}</text>
+      <text x="360" y="516" class="section">${escapeXml(collectionDate)}</text>
+      <text x="360" y="574" class="small light">${escapeXml(foodText)}</text>
+      <text x="360" y="624" class="small light">${escapeXml(putOutText)}</text>
 
       <text x="72" y="780" class="eyebrow">WHAT TO DO</text>
-      <rect x="72" y="818" width="936" height="282" rx="30" class="panel"/>
+      ${this.depthPanel(72, 818, 936, 282, 30, 'panel', binAccent)}
       ${this.taskRow(112, 874, Clock3, 'Do not put bins out before 18:00 the day before', COLORS.accent, 26)}
       ${this.taskRow(112, 962, CircleCheck, 'Place the correct bin at the collection point', binAccent, 26)}
       ${this.taskRow(112, 1048, Droplets, 'Return bins after they have been emptied', COLORS.accent, 26)}
 
-      <rect x="72" y="1130" width="936" height="132" rx="28" fill="#FFFFFF08" stroke="${
-        COLORS.border
-      }"/>
+      ${this.depthPanel(72, 1130, 936, 132, 28, 'panel', binAccent)}
       ${icon(CalendarDays, 112, 1168, 36, COLORS.muted)}
       <text x="168" y="1189" class="sectionSmall">Huntingdonshire District Council</text>
       <text x="168" y="1231" class="small">Live calendar with a safe local fallback.</text>
     `;
 
     return this.renderSvg(this.frame(body, binAccent));
+  }
+
+  private depthPanel(
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    radius: number,
+    className: string,
+    accent: string
+  ): string {
+    return `
+      <rect x="${x + 6}" y="${y + 12}" width="${width}" height="${height}" rx="${radius}" fill="#00030A" opacity=".68"/>
+      <rect x="${x}" y="${y}" width="${width}" height="${height}" rx="${radius}" class="${className}"/>
+      <path d="M ${x + radius} ${y + 1} H ${x + width - radius}" stroke="#FFFFFF" stroke-opacity=".16" stroke-width="2" stroke-linecap="round"/>
+      <path d="M ${x + 2} ${y + radius} V ${y + height - radius}" stroke="${accent}" stroke-opacity=".22" stroke-width="2" stroke-linecap="round"/>
+    `;
+  }
+
+  private depthGradientPanel(
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    radius: number,
+    fill: string,
+    accent: string
+  ): string {
+    return `
+      <rect x="${x + 6}" y="${y + 12}" width="${width}" height="${height}" rx="${radius}" fill="#00030A" opacity=".68"/>
+      <rect x="${x}" y="${y}" width="${width}" height="${height}" rx="${radius}" fill="${fill}" stroke="${accent}88" stroke-width="2"/>
+      <path d="M ${x + radius} ${y + 1} H ${x + width - radius}" stroke="#FFFFFF" stroke-opacity=".18" stroke-width="2" stroke-linecap="round"/>
+      <path d="M ${x + 2} ${y + radius} V ${y + height - radius}" stroke="${accent}" stroke-opacity=".28" stroke-width="2" stroke-linecap="round"/>
+    `;
   }
 
   private commandPanel(
@@ -189,7 +220,7 @@ export class CardRenderer {
     accent: string
   ): string {
     return `
-      <rect x="${x}" y="${y}" width="936" height="154" rx="28" class="panel"/>
+      ${this.depthPanel(x, y, 936, 154, 28, 'panel', accent)}
       <rect x="${x + 32}" y="${y + 32}" width="90" height="90" rx="24" fill="${accent}22" stroke="${accent}55"/>
       ${icon(iconSvg, x + 55, y + 55, 44, accent)}
       <text x="${x + 154}" y="${y + 67}" class="command">${escapeXml(command)}</text>
@@ -236,6 +267,7 @@ export class CardRenderer {
     return `
       <svg xmlns="http://www.w3.org/2000/svg" width="${WIDTH}" height="${HEIGHT}" viewBox="0 0 ${WIDTH} ${HEIGHT}">
         <defs>
+          <clipPath id="binPhotoClip"><rect x="112" y="350" width="220" height="246" rx="30"/></clipPath>
           <radialGradient id="glow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(920 120) rotate(135) scale(520)">
             <stop stop-color="${accent}" stop-opacity=".18"/>
             <stop offset="1" stop-color="${accent}" stop-opacity="0"/>
@@ -315,6 +347,17 @@ function escapeXml(value: string): string {
     .replaceAll('>', '&gt;')
     .replaceAll('"', '&quot;')
     .replaceAll("'", '&apos;');
+}
+
+async function readOptionalImageDataUri(
+  imagePath: string
+): Promise<string | null> {
+  try {
+    const image = await readFile(imagePath);
+    return `data:image/png;base64,${image.toString('base64')}`;
+  } catch {
+    return null;
+  }
 }
 
 function getBinAccent(status: CouncilCollectionStatus): string {
