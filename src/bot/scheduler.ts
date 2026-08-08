@@ -42,7 +42,7 @@ export function setupScheduler(
         );
         console.log(`[Scheduler] Duty advanced to: ${newDuty}`);
 
-        await messenger.sendCleaning(socket, groupId, true);
+        await messenger.sendWeeklyHandover(socket, groupId);
         console.log(
           '[Scheduler] Weekly visual cleaning card sent successfully.'
         );

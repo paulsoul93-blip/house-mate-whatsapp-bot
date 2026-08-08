@@ -10,6 +10,7 @@ import { BinCalendarService } from './binCalendarService';
 import { CardRenderer } from './cardRenderer';
 import { QueueService } from './queueService';
 import { WelcomeStateService } from './welcomeStateService';
+import { readPussyImage } from './pussyImageService';
 
 export class HouseMateMessenger {
   constructor(
@@ -44,13 +45,13 @@ export class HouseMateMessenger {
     });
     const welcomeLine =
       participantIds.length > 0
-        ? `👋 Welcome ${participantIds
+        ? `\u{1F44B} Welcome ${participantIds
             .map(toMentionLabel)
             .join(', ')} to ${this.config.houseAddress}`
-        : `🏠 Welcome to ${this.config.houseAddress}`;
+        : `\u{1F3E0} Welcome to ${this.config.houseAddress}`;
     const caption = [
       welcomeLine,
-      '💬 Chat here · 🧹 /cleaning · ♻️ /bins',
+      '\u{1F4AC} Chat here · \u{1F9F9} /cleaning · ♻️ /bins · \u{1F4F8} /pussy',
     ].join('\n');
 
     await socket.sendMessage(groupId, {
@@ -81,6 +82,13 @@ export class HouseMateMessenger {
     });
   }
 
+  public async sendWeeklyHandover(
+    socket: WASocket,
+    groupId: string
+  ): Promise<void> {
+    await this.sendCleaning(socket, groupId, true);
+  }
+
   public async sendBins(
     socket: WASocket,
     groupId: string,
@@ -97,6 +105,14 @@ export class HouseMateMessenger {
     await socket.sendMessage(groupId, {
       image,
       caption: buildBinsCaption(collectionStatus),
+    });
+  }
+
+  public async sendPussy(socket: WASocket, groupId: string): Promise<void> {
+    const image = await readPussyImage(this.config.pussyImagePath);
+    await socket.sendMessage(groupId, {
+      image,
+      caption: '\u{1F4F8} Shared house photo',
     });
   }
 }

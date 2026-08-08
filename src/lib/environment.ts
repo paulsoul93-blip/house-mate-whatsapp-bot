@@ -14,6 +14,7 @@ const rawEnvironmentSchema = z.object({
   SCHEDULE_CRON: z.string().trim().min(1).max(80),
   SCHEDULE_TIMEZONE: z.string().trim().min(1).max(80),
   DATA_DIR: z.string().trim().min(1),
+  PUSSY_IMAGE_PATH: z.string().trim().min(1).max(260),
   HOUSE_ADDRESS: z.string().trim().min(1).max(160),
   HOUSE_POSTCODE: z.string().trim().regex(/^PE29\s?7BW$/i),
   COUNCIL_CALENDAR_URL: z.string().url(),
@@ -31,6 +32,7 @@ export interface EnvironmentConfig {
   scheduleCron: string;
   scheduleTimezone: string;
   dataDir: string;
+  pussyImagePath: string;
   houseAddress: string;
   housePostcode: string;
   councilCalendarUrl: string;
@@ -51,6 +53,7 @@ export function parseEnvironment(
     SCHEDULE_CRON: environment.SCHEDULE_CRON ?? '0 19 * * 0',
     SCHEDULE_TIMEZONE: environment.SCHEDULE_TIMEZONE ?? 'Europe/London',
     DATA_DIR: environment.DATA_DIR ?? './data',
+    PUSSY_IMAGE_PATH: environment.PUSSY_IMAGE_PATH ?? './data/pussy.jpg',
     HOUSE_ADDRESS: environment.HOUSE_ADDRESS ?? '19 Silver Birch Close',
     HOUSE_POSTCODE: environment.HOUSE_POSTCODE ?? 'PE29 7BW',
     COUNCIL_CALENDAR_URL:
@@ -88,6 +91,7 @@ export function parseEnvironment(
     scheduleCron: result.data.SCHEDULE_CRON,
     scheduleTimezone: result.data.SCHEDULE_TIMEZONE,
     dataDir: result.data.DATA_DIR,
+    pussyImagePath: result.data.PUSSY_IMAGE_PATH,
     houseAddress: result.data.HOUSE_ADDRESS,
     housePostcode: result.data.HOUSE_POSTCODE.toUpperCase().replace(/^(PE29)\s?(7BW)$/, '$1 $2'),
     councilCalendarUrl: result.data.COUNCIL_CALENDAR_URL,

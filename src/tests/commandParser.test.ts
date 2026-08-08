@@ -12,6 +12,24 @@ describe('parseHouseCommand', () => {
     });
   });
 
+  it('recognises the shared photo command', () => {
+    expect(parseHouseCommand('/pussy')).toEqual({
+      name: 'pussy',
+      args: [],
+    });
+  });
+
+  it('recognises the owner test command for the Sunday handover', () => {
+    expect(parseHouseCommand('/testweekly')).toEqual({
+      name: 'test-weekly',
+      args: [],
+    });
+    expect(parseHouseCommand('/test-weekly')).toEqual({
+      name: 'test-weekly',
+      args: [],
+    });
+  });
+
   it('accepts a WhatsApp command suffix and normalises casing', () => {
     expect(parseHouseCommand('/CLEANING@HouseMateBot')).toEqual({
       name: 'cleaning',

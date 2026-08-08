@@ -4,10 +4,13 @@ A private, visual household assistant for the **House Mate App** WhatsApp group 
 
 ## Group commands
 
-- `/cleaning` — current cleaning duty, Monday-to-Sunday dates, next person, complete checklist, and the relevant bin reminder.
-- `/bins` — next collection date, Sunday evening put-out time, and the correct blue recycling or black/grey residual bin.
+- `/cleaning` - current cleaning duty, Monday-to-Sunday dates, next person, complete checklist, and the relevant bin reminder.
+- `/bins` - next collection date, Sunday evening put-out time, and the correct blue recycling or black/grey residual bin.
+- `/help` - the visual welcome card explaining the household shortcuts.
+- `/pussy` - sends the private shared house photo stored locally in `data/pussy.jpg`.
+- `/testweekly` - owner-only preview of the exact Sunday 19:00 handover card; it does not advance the rota.
 
-The two commands work for every member of the configured WhatsApp group. Owner-only legacy administration commands remain available for maintaining the rota.
+All public commands work for every member of the configured WhatsApp group. Owner-only legacy administration commands remain available for maintaining the rota.
 
 ## Automatic behaviour
 
@@ -56,7 +59,7 @@ export ORACLE_SSH_KEY_PATH="/path/to/oracle.key"
 ./scripts/deploy_oracle.sh
 ```
 
-The script keeps WhatsApp authentication, rota state, welcome state, council cache, and logs in the remote `data/` directory. The HTTP port stays private; use the printed SSH tunnel to open `/qr` for the one-time WhatsApp scan. The laptop does not need to remain on after the cloud session is authenticated.
+The script keeps WhatsApp authentication, rota state, welcome state, council cache, logs, and the private shared photo in the remote `data/` directory. The HTTP port stays private; use the printed SSH tunnel to open `/qr` for the one-time WhatsApp scan. The laptop does not need to remain on after the cloud session is authenticated.
 
 The bot uses the exact `WA_GROUP_ID` when configured, preventing messages from being sent to another group with the same title. A WhatsApp account is still required: a linked device inherits that account's name and number.
 
@@ -71,4 +74,4 @@ npm.cmd audit --omit=dev
 
 ## Security
 
-`.env`, WhatsApp authentication state, cached council data, runtime logs, and rota state are stored under ignored local paths. No credentials or linked-device secrets belong in the repository.
+`.env`, WhatsApp authentication state, cached council data, runtime logs, rota state, and the shared photo are stored under ignored local paths. No credentials, linked-device secrets, or private photos belong in the repository.

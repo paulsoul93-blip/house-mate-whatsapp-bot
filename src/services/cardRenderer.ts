@@ -7,11 +7,11 @@ import {
   CookingPot,
   Droplets,
   House,
+  Image,
   MessageCircle,
   ShowerHead,
   Sparkles,
   Trash2,
-  Users,
   Wind,
 } from 'lucide-static';
 import { formatDayMonth, formatLongDate } from '../lib/date';
@@ -62,7 +62,7 @@ export class CardRenderer {
       <text x="112" y="548" class="body muted">Chat with your housemates, check the cleaning rota</text>
       <text x="112" y="588" class="body muted">and keep up with shared home information.</text>
 
-      <text x="72" y="706" class="eyebrow">TWO USEFUL COMMANDS</text>
+      <text x="72" y="706" class="eyebrow">KEY COMMANDS</text>
       ${this.commandPanel(
         72,
         744,
@@ -83,8 +83,9 @@ export class CardRenderer {
       <rect x="72" y="1164" width="936" height="98" rx="24" fill="#FFFFFF08" stroke="${
         COLORS.border
       }"/>
-      ${icon(Users, 108, 1191, 38, COLORS.muted)}
-      <text x="168" y="1218" class="small">AVAILABLE TO EVERY MEMBER OF THIS GROUP</text>
+      ${icon(Image, 108, 1191, 38, COLORS.muted)}
+      <text x="168" y="1208" class="small">/pussy  ·  SHARED HOUSE PHOTO</text>
+      <text x="168" y="1238" class="meta">Available to every member of this group</text>
     `;
 
     return this.renderSvg(this.frame(body));
@@ -121,7 +122,7 @@ export class CardRenderer {
       ${this.taskRow(112, 714, CookingPot, HOUSE_CLEANING_TASKS[0])}
       ${this.taskRow(112, 804, Wind, HOUSE_CLEANING_TASKS[1])}
       ${this.taskRow(112, 894, ShowerHead, HOUSE_CLEANING_TASKS[2])}
-      ${this.taskRow(112, 984, Trash2, binTask, getBinAccent(data.collectionStatus))}
+      ${this.taskRow(112, 984, Trash2, binTask, getBinAccent(data.collectionStatus), 23)}
 
       <rect x="72" y="1120" width="936" height="142" rx="28" fill="#FFFFFF08" stroke="${
         COLORS.border
@@ -163,10 +164,10 @@ export class CardRenderer {
       <text x="316" y="624" class="small light">${escapeXml(putOutText)}</text>
 
       <text x="72" y="780" class="eyebrow">WHAT TO DO</text>
-      <rect x="72" y="818" width="936" height="266" rx="30" class="panel"/>
-      ${this.taskRow(112, 874, Clock3, 'Do not put bins out before 18:00 the day before')}
-      ${this.taskRow(112, 964, CircleCheck, 'Place the correct bin at the collection point', binAccent)}
-      ${this.taskRow(112, 1054, Droplets, 'Return bins after they have been emptied')}
+      <rect x="72" y="818" width="936" height="282" rx="30" class="panel"/>
+      ${this.taskRow(112, 874, Clock3, 'Do not put bins out before 18:00 the day before', COLORS.accent, 26)}
+      ${this.taskRow(112, 962, CircleCheck, 'Place the correct bin at the collection point', binAccent, 26)}
+      ${this.taskRow(112, 1048, Droplets, 'Return bins after they have been emptied', COLORS.accent, 26)}
 
       <rect x="72" y="1130" width="936" height="132" rx="28" fill="#FFFFFF08" stroke="${
         COLORS.border
@@ -204,12 +205,13 @@ export class CardRenderer {
     y: number,
     iconSvg: string,
     label: string,
-    accent: string = COLORS.accent
+    accent: string = COLORS.accent,
+    fontSize: number = 28
   ): string {
     return `
       <circle cx="${x + 22}" cy="${y + 18}" r="22" fill="${accent}20" stroke="${accent}55"/>
       ${icon(iconSvg, x + 10, y + 6, 24, accent)}
-      <text x="${x + 68}" y="${y + 28}" class="task">${escapeXml(label)}</text>
+      <text x="${x + 68}" y="${y + 28}" class="task" font-size="${fontSize}px">${escapeXml(label)}</text>
     `;
   }
 
@@ -253,23 +255,23 @@ export class CardRenderer {
         </defs>
         <style>
           text { font-family: ${FONT_FAMILY}; fill: ${COLORS.foreground}; }
-          .display { font-size: 66px; font-weight: 700; letter-spacing: -2px; }
-          .brand { font-size: 20px; font-weight: 700; letter-spacing: 2px; }
-          .meta { font-size: 15px; font-weight: 500; fill: ${COLORS.muted}; }
-          .badge, .eyebrow { font-size: 14px; font-weight: 700; letter-spacing: 2px; fill: ${COLORS.muted}; }
+          .display { font-size: 72px; font-weight: 700; letter-spacing: -2px; }
+          .brand { font-size: 21px; font-weight: 700; letter-spacing: 2px; }
+          .meta { font-size: 18px; font-weight: 500; fill: ${COLORS.muted}; }
+          .badge, .eyebrow { font-size: 17px; font-weight: 700; letter-spacing: 2px; fill: ${COLORS.muted}; }
           .light { fill: #EAF4FF; }
-          .body { font-size: 29px; font-weight: 500; }
+          .body { font-size: 32px; font-weight: 500; }
           .muted, .small { fill: ${COLORS.muted}; }
-          .section { font-size: 30px; font-weight: 650; }
-          .sectionSmall { font-size: 23px; font-weight: 650; }
-          .small { font-size: 20px; font-weight: 500; }
-          .command { font-size: 34px; font-weight: 700; letter-spacing: -.5px; }
-          .heroName { font-size: 74px; font-weight: 750; letter-spacing: -2px; }
-          .nextName { font-size: 43px; font-weight: 700; letter-spacing: -1px; }
-          .date { font-size: 25px; font-weight: 650; font-variant-numeric: tabular-nums; }
-          .nextDate { font-size: 18px; font-weight: 600; fill: ${COLORS.muted}; font-variant-numeric: tabular-nums; }
-          .task { font-size: 24px; font-weight: 550; }
-          .binTitle { font-size: 40px; font-weight: 750; letter-spacing: -1px; }
+          .section { font-size: 34px; font-weight: 650; }
+          .sectionSmall { font-size: 26px; font-weight: 650; }
+          .small { font-size: 24px; font-weight: 500; }
+          .command { font-size: 40px; font-weight: 700; letter-spacing: -.5px; }
+          .heroName { font-size: 80px; font-weight: 750; letter-spacing: -2px; }
+          .nextName { font-size: 47px; font-weight: 700; letter-spacing: -1px; }
+          .date { font-size: 29px; font-weight: 650; font-variant-numeric: tabular-nums; }
+          .nextDate { font-size: 23px; font-weight: 600; fill: ${COLORS.muted}; font-variant-numeric: tabular-nums; }
+          .task { font-size: 28px; font-weight: 550; }
+          .binTitle { font-size: 44px; font-weight: 750; letter-spacing: -1px; }
           .panel { fill: ${COLORS.panel}; stroke: ${COLORS.border}; filter: url(#shadow); }
           .panelStrong { fill: ${COLORS.panelStrong}; stroke: ${COLORS.border}; filter: url(#shadow); }
         </style>

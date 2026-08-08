@@ -1,7 +1,9 @@
 export type HouseCommandName =
   | 'cleaning'
   | 'bins'
+  | 'pussy'
   | 'welcome'
+  | 'test-weekly'
   | 'next'
   | 'previous'
   | 'skip'
@@ -15,6 +17,9 @@ export interface HouseCommand {
 const COMMAND_ALIASES: Readonly<Record<string, HouseCommandName>> = {
   '/cleaning': 'cleaning',
   '/bins': 'bins',
+  '/pussy': 'pussy',
+  '/testweekly': 'test-weekly',
+  '/test-weekly': 'test-weekly',
   '/help': 'welcome',
   '!cleaning': 'cleaning',
   '!duty': 'cleaning',
@@ -22,6 +27,7 @@ const COMMAND_ALIASES: Readonly<Record<string, HouseCommandName>> = {
   '!grafik': 'cleaning',
   '!help': 'welcome',
   '!status': 'welcome',
+  '!testweekly': 'test-weekly',
   '!next': 'next',
   '!nastepny': 'next',
   '!prev': 'previous',

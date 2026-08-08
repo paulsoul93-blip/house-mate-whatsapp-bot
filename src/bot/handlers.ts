@@ -34,8 +34,32 @@ export async function handleGroupMessage(
     return;
   }
 
+  if (command.name === 'pussy') {
+    try {
+      await messenger.sendPussy(socket, groupId);
+    } catch (error) {
+      console.error('[HouseMateCommands] Shared photo could not be sent:', error);
+      await socket.sendMessage(groupId, {
+        text: '\u{26A0}\u{FE0F} Shared photo is currently unavailable.',
+      });
+    }
+    return;
+  }
+
   if (command.name === 'welcome') {
     await messenger.sendWelcome(socket, groupId);
+    return;
+  }
+
+  if (command.name === 'test-weekly') {
+    if (!message.key.fromMe) {
+      console.warn(
+        '[HouseMateCommands] Ignored admin-only command \'test-weekly\' from a group member.'
+      );
+      return;
+    }
+
+    await messenger.sendWeeklyHandover(socket, groupId);
     return;
   }
 

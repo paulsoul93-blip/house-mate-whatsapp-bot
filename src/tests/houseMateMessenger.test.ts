@@ -13,13 +13,13 @@ describe('minimal WhatsApp card captions', () => {
       person: 'Pawel',
       startDate: '2026-07-27',
       endDate: '2026-08-02',
-      formattedRange: 'Mon 27/07 – Sun 02/08',
+      formattedRange: 'Mon 27/07 \u2013 Sun 02/08',
     },
     next: {
       person: 'Merica',
       startDate: '2026-08-03',
       endDate: '2026-08-09',
-      formattedRange: 'Mon 03/08 – Sun 09/08',
+      formattedRange: 'Mon 03/08 \u2013 Sun 09/08',
     },
   };
   const collectionStatus: CouncilCollectionStatus = {
@@ -35,7 +35,7 @@ describe('minimal WhatsApp card captions', () => {
 
   it('keeps the cleaning caption to one useful line', () => {
     expect(buildCleaningCaption(schedule)).toBe(
-      '🧹 Pawel is on duty · Mon 27/07 – Sun 02/08'
+      '\u{1F9F9} Pawel is on duty · Mon 27/07 \u2013 Sun 02/08'
     );
   });
 
