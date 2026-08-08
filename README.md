@@ -7,7 +7,6 @@ A private, visual household assistant for the **House Mate App** WhatsApp group 
 - `/cleaning` - current cleaning duty, Monday-to-Sunday dates, next person, complete checklist, and the relevant bin reminder.
 - `/bins` - next collection date, Sunday evening put-out time, and the correct blue recycling or black/grey residual bin.
 - `/help` - the visual welcome card explaining the household shortcuts.
-- `/pussy` - sends the private shared house photo stored locally in `data/pussy.jpg`.
 - `/testweekly` - owner-only preview of the exact Sunday 19:00 handover card; it does not advance the rota.
 
 The bin card also uses the local photorealistic `data/bins-photo.png` asset with blue recycling and black residual bins. It is intentionally ignored by GitHub and stays on this computer.

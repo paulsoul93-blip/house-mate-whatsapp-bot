@@ -18,6 +18,7 @@ const COMMAND_ALIASES: Readonly<Record<string, HouseCommandName>> = {
   '/cleaning': 'cleaning',
   '/bins': 'bins',
   '/pussy': 'pussy',
+  '/cipa': 'pussy',
   '/testweekly': 'test-weekly',
   '/test-weekly': 'test-weekly',
   '/help': 'welcome',

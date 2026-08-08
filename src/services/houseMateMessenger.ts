@@ -10,7 +10,7 @@ import { BinCalendarService } from './binCalendarService';
 import { CardRenderer } from './cardRenderer';
 import { QueueService } from './queueService';
 import { WelcomeStateService } from './welcomeStateService';
-import { readPussyImage } from './pussyImageService';
+import { readRandomPussyImage } from './pussyImageService';
 
 export class HouseMateMessenger {
   constructor(
@@ -51,13 +51,21 @@ export class HouseMateMessenger {
         : `\u{1F3E0} Welcome to ${this.config.houseAddress}`;
     const caption = [
       welcomeLine,
-      `\u{1F4AC} /cleaning · ♻️ /bins · \u{1F4F8} /pussy · \u{1F4CD} ${this.config.housePostcode}`,
+      `\u{1F4AC} /cleaning · ♻️ /bins · \u{1F4CD} ${this.config.housePostcode}`,
     ].join('\n');
 
     await socket.sendMessage(groupId, {
       image,
       caption,
       mentions: participantIds,
+    });
+
+    await socket.sendMessage(groupId, {
+      text: [
+        '\u{2728} House Mate is ready.',
+        'Use /cleaning for the rota, /bins for Sunday collection details, and /help for the quick guide.',
+        `\u{1F4CD} ${this.config.houseAddress} · ${this.config.housePostcode} · Handover Sunday 19:00`,
+      ].join('\n'),
     });
   }
 
@@ -118,7 +126,7 @@ export class HouseMateMessenger {
   }
 
   public async sendPussy(socket: WASocket, groupId: string): Promise<void> {
-    const image = await readPussyImage(this.config.pussyImagePath);
+    const image = await readRandomPussyImage(this.config.pussyImagePaths);
     await socket.sendMessage(groupId, {
       image,
       caption: '\u{1F4F8} Shared house photo',

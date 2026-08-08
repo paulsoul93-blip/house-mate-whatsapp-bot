@@ -13,7 +13,7 @@ export interface AppConfig {
   scheduleCron: string;
   scheduleTimezone: string;
   dataDir: string;
-  pussyImagePath: string;
+  pussyImagePaths: string[];
   binsImagePath: string;
   authDir: string;
   stateFile: string;
@@ -33,7 +33,9 @@ const dataDir = path.resolve(environment.dataDir);
 export const config: AppConfig = {
   ...environment,
   dataDir,
-  pussyImagePath: path.resolve(environment.pussyImagePath),
+  pussyImagePaths: environment.pussyImagePaths.map((imagePath) =>
+    path.resolve(imagePath)
+  ),
   binsImagePath: path.join(dataDir, 'bins-photo.png'),
   authDir: path.join(dataDir, 'auth_info'),
   stateFile: path.join(dataDir, 'state.json'),

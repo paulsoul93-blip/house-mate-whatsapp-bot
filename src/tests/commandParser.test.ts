@@ -17,6 +17,10 @@ describe('parseHouseCommand', () => {
       name: 'pussy',
       args: [],
     });
+    expect(parseHouseCommand('/cipa')).toEqual({
+      name: 'pussy',
+      args: [],
+    });
   });
 
   it('recognises the owner test command for the Sunday handover', () => {

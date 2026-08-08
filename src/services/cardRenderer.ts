@@ -8,7 +8,6 @@ import {
   CookingPot,
   Droplets,
   House,
-  Image,
   MessageCircle,
   ShowerHead,
   Sparkles,
@@ -82,9 +81,9 @@ export class CardRenderer {
       )}
 
       ${this.depthPanel(72, 1164, 936, 98, 24, 'panel', COLORS.muted)}
-      ${icon(Image, 108, 1191, 38, COLORS.muted)}
-      <text x="168" y="1208" class="small">/pussy  ·  SHARED HOUSE PHOTO</text>
-      <text x="168" y="1238" class="meta">Available to every member of this group</text>
+      ${icon(Clock3, 108, 1191, 38, COLORS.muted)}
+      <text x="168" y="1208" class="small">SUNDAY HANDOVER  ·  19:00</text>
+      <text x="168" y="1238" class="meta">Fresh rota, council data and house notes</text>
     `;
 
     return this.renderSvg(this.frame(body));

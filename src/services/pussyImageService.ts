@@ -13,3 +13,24 @@ export async function readPussyImage(imagePath: string): Promise<Buffer> {
     throw new Error('Configured shared photo is unavailable');
   }
 }
+
+export async function readRandomPussyImage(
+  imagePaths: readonly string[]
+): Promise<Buffer> {
+  const candidates = imagePaths.filter(Boolean);
+  if (candidates.length === 0) {
+    throw new Error('Configured shared photo is unavailable');
+  }
+
+  const startIndex = Math.floor(Math.random() * candidates.length);
+  for (let offset = 0; offset < candidates.length; offset += 1) {
+    const candidate = candidates[(startIndex + offset) % candidates.length];
+    try {
+      return await readPussyImage(candidate);
+    } catch {
+      continue;
+    }
+  }
+
+  throw new Error('Configured shared photo is unavailable');
+}

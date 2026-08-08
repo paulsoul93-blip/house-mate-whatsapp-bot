@@ -1,7 +1,10 @@
 import fs from 'fs';
 import os from 'os';
 import path from 'path';
-import { readPussyImage } from '../services/pussyImageService';
+import {
+  readPussyImage,
+  readRandomPussyImage,
+} from '../services/pussyImageService';
 
 describe('readPussyImage', () => {
   const temporaryDirectory = fs.mkdtempSync(
@@ -24,5 +27,18 @@ describe('readPussyImage', () => {
     await expect(
       readPussyImage(path.join(temporaryDirectory, 'missing.jpg'))
     ).rejects.toThrow('Configured shared photo is unavailable');
+  });
+
+  it('falls back to the next configured photo when one is unavailable', async () => {
+    const imagePath = path.join(temporaryDirectory, 'second.jpg');
+    const expected = Buffer.from('second-image-bytes');
+    fs.writeFileSync(imagePath, expected);
+
+    await expect(
+      readRandomPussyImage([
+        path.join(temporaryDirectory, 'missing-first.jpg'),
+        imagePath,
+      ])
+    ).resolves.toEqual(expected);
   });
 });
