@@ -133,6 +133,8 @@ export class HouseMateMessenger {
         this.config.housePostcode
       ),
     });
+
+    await this.sendBins(socket, groupId, true);
   }
 
   public async sendMemberPhoto(
