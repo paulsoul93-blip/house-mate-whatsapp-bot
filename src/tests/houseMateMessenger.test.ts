@@ -33,15 +33,15 @@ describe('minimal WhatsApp card captions', () => {
     sourceUrl: 'https://example.com/calendar',
   };
 
-  it('keeps the cleaning caption short and location-aware', () => {
+  it('keeps the cleaning caption short, spaced and location-aware', () => {
     expect(buildCleaningCaption(schedule)).toBe(
-      '🧹 Pawel · Mon 27/07 \u2013 Sun 02/08\n🏠 19 Silver Birch Close · PE29 7BW · Sunday handover 19:00'
+      '\u{1F9F9} NOW \u00B7 Pawel \u00B7 Mon 27/07 \u2013 Sun 02/08\n\u{27A1}\uFE0F NEXT \u00B7 Merica \u00B7 Mon 03/08 \u2013 Sun 09/08\n\u{1F3E0} 19 Silver Birch Close \u00B7 PE29 7BW \u00B7 Sunday 19:00'
     );
   });
 
-  it('keeps the bin caption compact while preserving the action and location', () => {
+  it('keeps the bin caption compact and names the selected colour', () => {
     expect(buildBinsCaption(collectionStatus)).toBe(
-      '♻️ Blue recycling bin + food caddy · Sun 02/08 after 18:00\n🏠 19 Silver Birch Close · PE29 7BW'
+      '\u{1F535} Blue \u00B7 recycling \u00B7 Sun 02/08 after 18:00\n\u{1F3E0} 19 Silver Birch Close \u00B7 PE29 7BW'
     );
   });
 
@@ -52,6 +52,8 @@ describe('minimal WhatsApp card captions', () => {
         collection: null,
         source: 'unavailable',
       })
-    ).toBe('⚠️ Council data unavailable · Try /bins again\n🏠 19 Silver Birch Close · PE29 7BW');
+    ).toBe(
+      '\u26A0\uFE0F Council data unavailable \u00B7 Try /bins again\n\u{1F3E0} 19 Silver Birch Close \u00B7 PE29 7BW'
+    );
   });
 });

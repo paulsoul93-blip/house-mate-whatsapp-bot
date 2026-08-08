@@ -140,8 +140,9 @@ export function buildCleaningCaption(
   postcode = 'PE29 7BW'
 ): string {
   return [
-    `🧹 ${schedule.current.person} · ${schedule.current.formattedRange}`,
-    `🏠 ${address} · ${postcode} · Sunday handover 19:00`,
+    `🧹 NOW · ${schedule.current.person} · ${schedule.current.formattedRange}`,
+    `➡️ NEXT · ${schedule.next.person} · ${schedule.next.formattedRange}`,
+    `🏠 ${address} · ${postcode} · Sunday 19:00`,
   ].join('\n');
 }
 
@@ -158,10 +159,13 @@ export function buildBinsCaption(
   }
 
   const containerList = status.collection.bins
+    .filter((bin) => bin !== 'food')
     .map(getAccessibleBinLabel)
     .join(' + ');
+  const mainBin = status.collection.bins.find((bin) => bin !== 'food');
+  const colourIcon = mainBin === 'recycling' ? '\u{1F535}' : '\u26AB';
   return [
-    `♻️ ${capitalise(containerList)} · ${formatWeekdayDayMonth(
+    `${colourIcon} ${capitalise(containerList || 'check council')} · ${formatWeekdayDayMonth(
       status.collection.putOutDate
     )} after 18:00`,
     `🏠 ${address} · ${postcode}`,
@@ -170,12 +174,12 @@ export function buildBinsCaption(
 
 function getAccessibleBinLabel(bin: BinKind): string {
   if (bin === 'recycling') {
-    return 'blue recycling bin';
+    return 'blue · recycling';
   }
   if (bin === 'residual') {
-    return 'black/grey residual bin';
+    return 'black · waste';
   }
-  return 'food caddy';
+  return 'check council';
 }
 
 function toMentionLabel(participantId: string): string {

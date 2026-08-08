@@ -143,9 +143,16 @@ export class CardRenderer {
     const putOutText = collection
       ? `Put out after 18:00 on ${formatLongDate(collection.putOutDate)}`
       : 'Council calendar data is temporarily unavailable';
-    const foodText = collection?.bins.includes('food')
-      ? 'Food caddy is collected on the same day'
-      : 'No food collection listed for this date';
+    const collectionNote = mainBin === 'recycling'
+      ? 'Recycling collection · use the blue bin'
+      : mainBin === 'residual'
+        ? 'Waste collection · use the black bin'
+        : 'No blue or black bin listed for this date';
+    const binTag = mainBin === 'recycling'
+      ? 'BLUE · RECYCLING'
+      : mainBin === 'residual'
+        ? 'BLACK · WASTE'
+        : 'CHECK COUNCIL';
 
     const body = `
       ${this.header(data.address, data.postcode, 'COUNCIL COLLECTION')}
@@ -156,9 +163,11 @@ export class CardRenderer {
         ? `<rect x="112" y="350" width="220" height="246" rx="30" fill="#07101F" stroke="${binAccent}88"/><image href="${binPhoto}" x="114" y="352" width="216" height="242" preserveAspectRatio="xMidYMid slice" clip-path="url(#binPhotoClip)"/>`
         : `<rect x="112" y="350" width="164" height="246" rx="30" fill="${binAccent}"/>${icon(Trash2, 154, 412, 80, COLORS.foreground)}`}
       <text x="360" y="376" class="eyebrow light">NEXT COLLECTION</text>
+      <rect x="744" y="344" width="226" height="48" rx="24" fill="${binAccent}33" stroke="${binAccent}AA"/>
+      <text x="857" y="375" class="badge light" text-anchor="middle">${escapeXml(binTag)}</text>
       <text x="360" y="444" class="binTitle">${escapeXml(title)}</text>
       <text x="360" y="516" class="section">${escapeXml(collectionDate)}</text>
-      <text x="360" y="574" class="small light">${escapeXml(foodText)}</text>
+      <text x="360" y="574" class="small light">${escapeXml(collectionNote)}</text>
       <text x="360" y="624" class="small light">${escapeXml(putOutText)}</text>
 
       <text x="72" y="780" class="eyebrow">WHAT TO DO</text>
@@ -375,12 +384,12 @@ function getBinAccent(status: CouncilCollectionStatus): string {
 
 function getBinLabel(bin: BinKind): string {
   if (bin === 'recycling') {
-    return 'BLUE RECYCLING BIN';
+    return 'BLUE · RECYCLING';
   }
   if (bin === 'residual') {
-    return 'BLACK / GREY RESIDUAL BIN';
+    return 'BLACK · WASTE';
   }
-  return 'FOOD CADDY';
+  return 'CHECK COUNCIL';
 }
 
 function getBinTask(status: CouncilCollectionStatus): string {
@@ -390,11 +399,8 @@ function getBinTask(status: CouncilCollectionStatus): string {
   }
 
   const mainBin = collection.bins.find((bin) => bin !== 'food');
-  const parts = mainBin ? [getBinLabel(mainBin)] : [];
-  if (collection.bins.includes('food')) {
-    parts.push('FOOD CADDY');
-  }
-  return `Put out ${parts.join(' + ')} after 18:00 on ${formatDayMonth(
+  const label = mainBin ? getBinLabel(mainBin) : 'BLUE / BLACK BIN';
+  return `Put out ${label} after 18:00 on ${formatDayMonth(
     collection.putOutDate
   )}`;
 }
