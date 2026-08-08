@@ -1,153 +1,117 @@
-import { WASocket, proto } from '@whiskeysockets/baileys';
+import type { WASocket, proto } from '@whiskeysockets/baileys';
+import { parseHouseCommand } from './commandParser';
+import { extractCommandText } from './messageContent';
+import { HouseMateMessenger } from '../services/houseMateMessenger';
 import { QueueService } from '../services/queueService';
 
-const startTime = new Date();
-
 export async function handleGroupMessage(
-  sock: WASocket,
-  msg: proto.IWebMessageInfo,
-  queueService: QueueService
+  socket: WASocket,
+  message: proto.IWebMessageInfo,
+  queueService: QueueService,
+  messenger: HouseMateMessenger
 ): Promise<void> {
-  if (!msg.message || msg.key.fromMe) return;
-
-  const jid = msg.key.remoteJid;
-  if (!jid) return;
-
-  const text =
-    msg.message.conversation ||
-    msg.message.extendedTextMessage?.text ||
-    msg.message.imageMessage?.caption ||
-    '';
-
-  const trimmed = text.trim();
-  if (!trimmed.startsWith('!')) return;
-
-  const parts = trimmed.slice(1).split(/\s+/);
-  const command = parts[0]?.toLowerCase();
-  const args = parts.slice(1);
-
-  switch (command) {
-    case 'duty':
-    case 'kolejka':
-    case 'grafik':
-    case 'who':
-      await sock.sendMessage(jid, { text: queueService.getStatusText() }, { quoted: msg });
-      break;
-
-    case 'next':
-    case 'nastepny': {
-      const newDuty = queueService.advanceDuty('Manual !next command');
-      await sock.sendMessage(
-        jid,
-        {
-          text: `🔄 *Zmieniono dyżurnego!*\nNowy dyżurny to: *${newDuty}*\n\n${queueService.getStatusText()}`,
-        },
-        { quoted: msg }
-      );
-      break;
-    }
-
-    case 'prev':
-    case 'poprzedni': {
-      const prevDuty = queueService.previousDuty();
-      await sock.sendMessage(
-        jid,
-        {
-          text: `⬅️ *Cofnięto dyżurnego!*\nObecny dyżurny to: *${prevDuty}*\n\n${queueService.getStatusText()}`,
-        },
-        { quoted: msg }
-      );
-      break;
-    }
-
-    case 'skip':
-    case 'pomin': {
-      const { skipped, newDuty } = queueService.skipCurrentDuty();
-      await sock.sendMessage(
-        jid,
-        {
-          text: `⏭️ *Pominięto osobę:* ${skipped}\nNowy dyżurny na ten tydzień: *${newDuty}*`,
-        },
-        { quoted: msg }
-      );
-      break;
-    }
-
-    case 'setduty':
-    case 'ustaw': {
-      const targetName = args.join(' ');
-      if (!targetName) {
-        await sock.sendMessage(
-          jid,
-          { text: '⚠️ Podaj imię osoby! Przykład: `!setduty Merica`' },
-          { quoted: msg }
-        );
-        return;
-      }
-      const success = queueService.setDuty(targetName);
-      if (success) {
-        await sock.sendMessage(
-          jid,
-          {
-            text: `✅ *Ustawiono dyżurnego na:* ${queueService.getCurrentDuty()}\n\n${queueService.getStatusText()}`,
-          },
-          { quoted: msg }
-        );
-      } else {
-        const available = queueService.getMembers().join(', ');
-        await sock.sendMessage(
-          jid,
-          { text: `❌ Nie znaleziono osoby "${targetName}". Dostępne osoby: ${available}` },
-          { quoted: msg }
-        );
-      }
-      break;
-    }
-
-    case 'remind':
-    case 'przypomnij': {
-      await sock.sendMessage(jid, { text: queueService.getWeeklyAnnouncement() });
-      break;
-    }
-
-    case 'ping':
-    case 'status': {
-      const uptimeMs = Date.now() - startTime.getTime();
-      const uptimeMin = Math.floor(uptimeMs / 60000);
-      const uptimeHours = Math.floor(uptimeMin / 60);
-
-      await sock.sendMessage(
-        jid,
-        {
-          text:
-            `🤖 *HOUSE MATE BOT STATUS*\n\n` +
-            `✅ *Stan:* Działa poprawnie\n` +
-            `⏱️ *Uptime:* ${uptimeHours}h ${uptimeMin % 60}m\n` +
-            `👤 *Obecny dyżurny:* ${queueService.getCurrentDuty()}`,
-        },
-        { quoted: msg }
-      );
-      break;
-    }
-
-    case 'help':
-    case 'pomoc':
-      await sock.sendMessage(
-        jid,
-        {
-          text:
-            `📖 *KOMENDY BOTA HOUSE MATE APP*\n\n` +
-            `• \`!duty\` / \`!kolejka\` - Pokazuje obecnego dyżurnego i grafik\n` +
-            `• \`!next\` / \`!nastepny\` - Przechodzi do następnej osoby w kolejce\n` +
-            `• \`!prev\` / \`!poprzedni\` - Cofa do poprzedniej osoby\n` +
-            `• \`!skip\` / \`!pomin\` - Pomija obecną osobę na ten tydzień\n` +
-            `• \`!setduty <imię>\` - Ustawia wybraną osobę jako dyżurnego\n` +
-            `• \`!remind\` - Wysyła oficjalne przypomnienie tygodniowe\n` +
-            `• \`!status\` - Pokazuje status i uptime bota\n` +
-            `• \`!help\` - Pokazuje tę wiadomość pomocy`,
-        },
-        { quoted: msg }
-      );
-      break;
+  if (!message.message) {
+    return;
   }
+
+  const groupId = message.key.remoteJid;
+  if (!groupId) {
+    return;
+  }
+
+  const command = parseHouseCommand(extractCommandText(message.message));
+  if (!command) {
+    return;
+  }
+
+  if (command.name === 'cleaning') {
+    await messenger.sendCleaning(socket, groupId);
+    return;
+  }
+
+  if (command.name === 'bins') {
+    await messenger.sendBins(socket, groupId);
+    return;
+  }
+
+  if (command.name === 'pussy') {
+    try {
+      await messenger.sendPussy(socket, groupId);
+    } catch (error) {
+      console.error('[HouseMateCommands] Shared photo could not be sent:', error);
+      await socket.sendMessage(groupId, {
+        text: '\u{26A0}\u{FE0F} Shared photo is currently unavailable.',
+      });
+    }
+    return;
+  }
+
+  if (command.name === 'member-photo') {
+    const personName = command.args[0];
+    if (!personName) {
+      return;
+    }
+
+    try {
+      await messenger.sendMemberPhoto(socket, groupId, personName);
+    } catch (error) {
+      console.error('[HouseMateCommands] Member photo could not be sent:', error);
+      await socket.sendMessage(groupId, {
+        text: '\u26A0\uFE0F Member photo is currently unavailable.',
+      });
+    }
+    return;
+  }
+
+  if (command.name === 'welcome') {
+    await messenger.sendWelcome(socket, groupId);
+    return;
+  }
+
+  if (command.name === 'test-weekly') {
+    if (!message.key.fromMe) {
+      console.warn(
+        '[HouseMateCommands] Ignored admin-only command \'test-weekly\' from a group member.'
+      );
+      return;
+    }
+
+    await messenger.sendWeeklyHandover(socket, groupId);
+    return;
+  }
+
+  if (command.name === 'test-sunday') {
+    if (!message.key.fromMe) {
+      console.warn(
+        '[HouseMateCommands] Ignored admin-only command \'test-sunday\' from a group member.'
+      );
+      return;
+    }
+
+    await messenger.sendSundayAnnouncement(socket, groupId);
+    return;
+  }
+
+  if (!message.key.fromMe) {
+    console.warn(
+      `[HouseMateCommands] Ignored owner-only command '${command.name}' from a group member.`
+    );
+    return;
+  }
+
+  if (command.name === 'next') {
+    queueService.advanceDuty('Manual next duty command');
+  } else if (command.name === 'previous') {
+    queueService.previousDuty();
+  } else if (command.name === 'skip') {
+    queueService.skipCurrentDuty();
+  } else if (command.name === 'set-duty') {
+    const personName = command.args.join(' ');
+    if (!personName || !queueService.setDuty(personName)) {
+      await messenger.sendCleaning(socket, groupId);
+      return;
+    }
+  }
+
+  await messenger.sendCleaning(socket, groupId);
 }
