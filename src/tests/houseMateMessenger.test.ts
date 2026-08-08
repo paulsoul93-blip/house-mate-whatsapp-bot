@@ -34,15 +34,15 @@ describe('minimal WhatsApp card captions', () => {
     sourceUrl: 'https://example.com/calendar',
   };
 
-  it('keeps the cleaning caption short, spaced and location-aware', () => {
+  it('keeps the cleaning caption short and spaced', () => {
     expect(buildCleaningCaption(schedule)).toBe(
-      '\u{1F9F9} NOW \u00B7 Pawel \u00B7 Mon 27/07 \u2013 Sun 02/08\n\u{27A1}\uFE0F NEXT \u00B7 Merica \u00B7 Mon 03/08 \u2013 Sun 09/08\n\u{1F3E0} 19 Silver Birch Close \u00B7 PE29 7BW \u00B7 Sunday 19:00'
+      '\u{1F9F9} NOW \u00B7 Pawel \u00B7 Mon 27/07 \u2013 Sun 02/08\n\u{27A1}\uFE0F NEXT \u00B7 Merica \u00B7 Mon 03/08 \u2013 Sun 09/08'
     );
   });
 
   it('keeps the bin caption compact and names the selected colour', () => {
     expect(buildBinsCaption(collectionStatus)).toBe(
-      '\u{1F535} Blue \u00B7 recycling \u00B7 Sun 02/08 after 18:00\n\u{1F3E0} 19 Silver Birch Close \u00B7 PE29 7BW'
+      '\u{1F535} Blue \u00B7 recycling \u00B7 Sun 02/08 after 18:00'
     );
   });
 
@@ -53,19 +53,14 @@ describe('minimal WhatsApp card captions', () => {
         collection: null,
         source: 'unavailable',
       })
-    ).toBe(
-      '\u26A0\uFE0F Council data unavailable \u00B7 Try /bins again\n\u{1F3E0} 19 Silver Birch Close \u00B7 PE29 7BW'
-    );
+    ).toBe('\u26A0\uFE0F Council data unavailable \u00B7 Try /bins again');
   });
 
-  it('keeps the Sunday announcement focused on one next person', () => {
+  it('keeps the Sunday announcement focused on one next person and the short checklist', () => {
     expect(
-      buildSundayAnnouncementCaption(
-        'Merica',
-        'Mon 10/08 – Sun 16/08'
-      )
+      buildSundayAnnouncementCaption('Merica', 'Mon 10/08 \u2013 Sun 16/08')
     ).toBe(
-      '🎉 Congratulations · next week is Merica\n🧹 Mon 10/08 – Sun 16/08\n🏠 19 Silver Birch Close · PE29 7BW · Sunday 19:00 handover'
+      '\u{1F389} Congratulations \u00B7 next week is Merica\n🧹 Mon 10/08 \u2013 Sun 16/08\n🧼 Sink + worktops \u00B7 🧹 Vacuum + mop \u00B7 🚿 Toilets + shower \u00B7 🗑️ Bin out'
     );
   });
 });

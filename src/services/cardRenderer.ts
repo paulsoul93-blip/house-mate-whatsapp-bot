@@ -53,22 +53,22 @@ export class CardRenderer {
   public async renderWelcomeCard(data: WelcomeCardData): Promise<Buffer> {
     const body = `
       ${this.header(data.address, data.postcode, 'HOUSEHOLD SPACE')}
-      <text x="72" y="250" class="display">Welcome home.</text>
-      <text x="72" y="308" class="body muted">This is the private group for everyone living at</text>
-      <text x="72" y="352" class="body">${escapeXml(data.address)}.</text>
+      <text x="72" y="250" class="display">House Mate is live.</text>
+      <text x="72" y="308" class="body muted">Rota, bins and house updates.</text>
+      <text x="72" y="352" class="body">Everything for the house, in one place.</text>
 
       ${this.depthPanel(72, 420, 936, 200, 28, 'panelStrong', COLORS.accent)}
       ${icon(MessageCircle, 112, 462, 44, COLORS.accent)}
-      <text x="180" y="484" class="section">Stay connected</text>
-      <text x="112" y="548" class="body muted">Chat with your housemates, check the cleaning rota</text>
-      <text x="112" y="588" class="body muted">and keep up with shared home information.</text>
+      <text x="180" y="484" class="section">Your house, at a glance</text>
+      <text x="112" y="548" class="body muted">See who is on duty and what goes out on Sunday.</text>
+      <text x="112" y="588" class="body muted">Short, clear updates for everyone at home.</text>
 
-      <text x="72" y="706" class="eyebrow">KEY COMMANDS</text>
+      <text x="72" y="706" class="eyebrow">START HERE</text>
       ${this.commandPanel(
         72,
         744,
         '/cleaning',
-        'Current duty, dates, next person and the full checklist',
+        'Who is on duty · dates · checklist',
         Sparkles,
         COLORS.primary
       )}
@@ -76,15 +76,15 @@ export class CardRenderer {
         72,
         930,
         '/bins',
-        'Next council collection and what to put out on Sunday',
+        'Blue recycling or black waste · next date',
         Trash2,
         COLORS.accent
       )}
 
       ${this.depthPanel(72, 1164, 936, 98, 24, 'panel', COLORS.muted)}
       ${icon(Clock3, 108, 1191, 38, COLORS.muted)}
-      <text x="168" y="1208" class="small">SUNDAY HANDOVER  ·  19:00</text>
-      <text x="168" y="1238" class="meta">Fresh rota, council data and house notes</text>
+      <text x="168" y="1208" class="small">SUNDAY RHYTHM  ·  17:00 + 19:00</text>
+      <text x="168" y="1238" class="meta">Next-week preview · rota handover</text>
     `;
 
     return this.renderSvg(this.frame(body));
@@ -153,6 +153,7 @@ export class CardRenderer {
       <text x="112" y="1090" class="eyebrow light">CONGRATULATIONS</text>
       <text x="112" y="1154" class="heroName">${escapeXml(data.person)}</text>
       <text x="112" y="1212" class="sectionSmall">${escapeXml(data.formattedRange)}</text>
+      <text x="112" y="1248" class="meta">Sink + worktops · vacuum + mop · toilets + shower · bin out</text>
     `;
 
     return this.renderSvg(this.frame(body));

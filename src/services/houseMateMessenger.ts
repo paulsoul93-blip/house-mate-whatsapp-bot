@@ -51,11 +51,11 @@ export class HouseMateMessenger {
       participantIds.length > 0
         ? `\u{1F44B} Welcome ${participantIds
             .map(toMentionLabel)
-            .join(', ')} to ${this.config.houseAddress}`
-        : `\u{1F3E0} Welcome to ${this.config.houseAddress}`;
+            .join(', ')} to House Mate`
+        : '\u{1F3E0} Welcome to House Mate';
     const caption = [
       welcomeLine,
-      `\u{1F4AC} /cleaning · ♻️ /bins · \u{1F4CD} ${this.config.housePostcode}`,
+      '\u{1F4AC} /cleaning · ♻️ /bins · /help',
     ].join('\n');
 
     await socket.sendMessage(groupId, {
@@ -68,7 +68,7 @@ export class HouseMateMessenger {
       text: [
         '\u{2728} House Mate is ready.',
         'Use /cleaning for the rota, /bins for Sunday collection details, and /help for the quick guide.',
-        `\u{1F4CD} ${this.config.houseAddress} · ${this.config.housePostcode} · Handover Sunday 19:00`,
+        '\u{1F552} Sunday preview 17:00 · rota handover 19:00.',
       ].join('\n'),
     });
   }
@@ -90,11 +90,7 @@ export class HouseMateMessenger {
 
     await socket.sendMessage(groupId, {
       image,
-      caption: buildCleaningCaption(
-        schedule,
-        this.config.houseAddress,
-        this.config.housePostcode
-      ),
+      caption: buildCleaningCaption(schedule),
     });
   }
 
@@ -126,12 +122,7 @@ export class HouseMateMessenger {
 
     await socket.sendMessage(groupId, {
       image,
-      caption: buildSundayAnnouncementCaption(
-        nextPerson,
-        schedule.next.formattedRange,
-        this.config.houseAddress,
-        this.config.housePostcode
-      ),
+      caption: buildSundayAnnouncementCaption(nextPerson, schedule.next.formattedRange),
     });
 
     await this.sendBins(socket, groupId, true);
@@ -170,11 +161,7 @@ export class HouseMateMessenger {
 
     await socket.sendMessage(groupId, {
       image,
-      caption: buildBinsCaption(
-        collectionStatus,
-        this.config.houseAddress,
-        this.config.housePostcode
-      ),
+      caption: buildBinsCaption(collectionStatus),
     });
   }
 
@@ -187,40 +174,28 @@ export class HouseMateMessenger {
   }
 }
 
-export function buildCleaningCaption(
-  schedule: DutySchedule,
-  address = '19 Silver Birch Close',
-  postcode = 'PE29 7BW'
-): string {
+export function buildCleaningCaption(schedule: DutySchedule): string {
   return [
     `🧹 NOW · ${schedule.current.person} · ${schedule.current.formattedRange}`,
     `➡️ NEXT · ${schedule.next.person} · ${schedule.next.formattedRange}`,
-    `🏠 ${address} · ${postcode} · Sunday 19:00`,
   ].join('\n');
 }
 
 export function buildSundayAnnouncementCaption(
   person: string,
-  formattedRange: string,
-  address = '19 Silver Birch Close',
-  postcode = 'PE29 7BW'
+  formattedRange: string
 ): string {
   return [
     `\u{1F389} Congratulations · next week is ${person}`,
     `🧹 ${formattedRange}`,
-    `🏠 ${address} · ${postcode} · Sunday 19:00 handover`,
+    '🧼 Sink + worktops · 🧹 Vacuum + mop · 🚿 Toilets + shower · 🗑️ Bin out',
   ].join('\n');
 }
 
-export function buildBinsCaption(
-  status: CouncilCollectionStatus,
-  address = '19 Silver Birch Close',
-  postcode = 'PE29 7BW'
-): string {
+export function buildBinsCaption(status: CouncilCollectionStatus): string {
   if (!status.collection) {
     return [
       '⚠️ Council data unavailable · Try /bins again',
-      `🏠 ${address} · ${postcode}`,
     ].join('\n');
   }
 
@@ -234,7 +209,6 @@ export function buildBinsCaption(
     `${colourIcon} ${capitalise(containerList || 'check council')} · ${formatWeekdayDayMonth(
       status.collection.putOutDate
     )} after 18:00`,
-    `🏠 ${address} · ${postcode}`,
   ].join('\n');
 }
 
